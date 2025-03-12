@@ -12,9 +12,10 @@ import image_6 from "../assets/pexels-pixabay-258154.jpg";
 import image_7 from "../assets/pexels-pixabay-262047.jpg";
 import image_8 from "../assets/pexels-quark-studio-1159039-2507010.jpg";
 import image_9 from "../assets/pexels-quark-studio-1159039-2507010.jpg";
-import image_10 from "../assets/pexels-wildlittlethingsphoto-2017802.jpg";
 import SearchRoom from '../components/SearchRoom';
 import { useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
+
 
 const images=[
   image_1,
@@ -25,11 +26,11 @@ const images=[
   image_6,
   image_7,
   image_8,
-  image_9,
-  image_10
+  image_9
  ]
 
 export default function Landding({ children}) {
+  const isLogged = useSelector(state=>state.isLoggedReducer);
   const [currentIndex, setCurrentIndex] = useState(0);
   const location  = useLocation();
   
@@ -40,7 +41,6 @@ export default function Landding({ children}) {
     return () => clearInterval(interval);
   }, []);
  
-  
   return (
     <div className="w-full h-full">
       <Navbar/>
@@ -59,7 +59,7 @@ export default function Landding({ children}) {
         </motion.div>
       </AnimatePresence>
      {
-       location.pathname.startsWith("/authentication")?
+       !isLogged && location.pathname.startsWith("/authentication")?
        children:<SearchRoom/>
      }
       
@@ -77,7 +77,7 @@ export default function Landding({ children}) {
       </div>
     </div>
       {
-        !location.pathname.startsWith("authentication")?
+        location.pathname.startsWith("/authentication")?
         null:children
       }
     </div>

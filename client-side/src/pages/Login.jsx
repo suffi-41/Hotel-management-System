@@ -1,8 +1,46 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { FaRegCircleUser } from "react-icons/fa6";
+import {Link, useLocation, useNavigate} from "react-router-dom"
+import {useFormik}  from "formik";
+import { toast } from "react-toastify";
+import { loginScema } from "../scema";
+import { loginUrl} from "../utils/api";
+
+
 
 export default function Login() {
+  const navigate = useNavigate();
+  const {values, errors, touched, handleBlur, handleChange, handleSubmit} = useFormik({
+    initialValues:{
+      phone:""
+    },
+    validationSchema: loginScema,
+    onSubmit: async (values) => {
+      console.log(values);
+
+      const response = await fetch(
+        loginUrl,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values),
+        }
+      );
+      const { status, message, data} = await response.json();
+      console.log(status,"response data")
+      if (status) {
+        toast.success(message);
+        navigate("password", {state:{data}});      
+      } else {
+        toast.error(message);
+      }
+    },
+  })
+
+  
   return (
     <motion.div
       className="z-50 sm:w-1/2 w-9/12  p-5 bg-transparent text-white flex flex-col justifuy-center items-center gap-2 backdrop-blur-sm  shadow-lg rounded-lg  "
@@ -20,12 +58,21 @@ export default function Login() {
         <p className="text-justify text-white opacity-100">
           Welcome back. Please enter your phone number to continue. if you don't have an account you can create one.
         </p>
-        <a className="text-start text-white opacity-100 cursor-pointer underline hover:text-blue-700">Click here to create an account</a>
+        <Link to="/authentication/signup" className="text-start text-white opacity-100 cursor-pointer underline hover:text-blue-700">Click here to create an account</Link>
       </div>
-      <div className="flex justify-center items-center gap-2 w-full flex-wrap lg:flex-nowrap  ">
+      <div className="flex justify-center gap-1 flex-col">
+        <p className="text-red-900 opacity-100">
+          {errors.phone && touched.phone && "*" + errors.phone}
+        </p>
+      </div>
+      <form onSubmit={handleSubmit} className="flex justify-center items-center gap-2 w-full flex-wrap lg:flex-nowrap  ">
         <input
           type="text"
           placeholder="Enter you phone number"
+          name="phone"
+          value={values.phone}
+          onChange={handleChange}
+          onBlur={handleBlur}
           className="w-full p-4 border-2 border-gray-300 bg-transparent placeholder-white  outline-none flex-grow md:w-40 backdrop-blur-sm   "
         />
         <motion.button
@@ -35,7 +82,7 @@ export default function Login() {
         >
           Submit
         </motion.button>
-      </div>
+      </form>
     </motion.div>
   );
 }

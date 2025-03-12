@@ -2,18 +2,23 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 import router from "./routers/index.jsx";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./index.css";
 import App from "./App.jsx";
-
-
+import store from "./redux/store.js";
+import { Provider } from "react-redux";
+import { User } from "./state/User.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router}>
-      <App />
-    </RouterProvider>
+    <Provider store={store}>
+      <User>
+        <RouterProvider router={router}>
+          <App />
+        </RouterProvider>
+      </User>
+    </Provider>
     <ToastContainer
       position="top-center"
       autoClose={2000}
