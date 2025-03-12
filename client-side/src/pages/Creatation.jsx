@@ -61,12 +61,12 @@ export default function Creatation() {
     >
       <div className="w-full text-4xl font-semibold mb-4 flex items-start gap-2">
         <FaRegCircleUser className="text-4xl font-semibold mt-1" />
-        <h1 className=" text-4xl font-semibold">Create a new accound</h1>
+        <h1 className=" text-4xl font-semibold">Create a new account</h1>
       </div>
       <div className="w-full text-white flex justify-center items-start flex-col px-2">
         <p className="text-justify text-white opacity-100">
           Welcome to Hotel name. Please enter your details to create a new
-          accound. if you have an account you can login you accound.
+          accound. if you have an account you can login you account.
         </p>
         <Link
           to="/authentication"

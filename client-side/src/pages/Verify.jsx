@@ -8,10 +8,11 @@ import { verifyScema } from "../scema";
 import { UserContext } from "../state/User";
 import { verifyUrl } from "../utils/api";
 import { middle_hidden } from "../utils/extra";
+import UserAvature from "../components/UserAvature";
 
 import { actionCreator } from "../redux/index";
 import { bindActionCreators } from "redux";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 export default function Verify() {
   const dispatch = useDispatch();
@@ -30,10 +31,8 @@ export default function Verify() {
       toast.error("Time out");
     }
   }, [time]);
- 
 
   const resendOtp = async () => {
-    
     const { status, message } = await sendOtp(id);
     if (status) {
       toast.success(message);
@@ -46,6 +45,7 @@ export default function Verify() {
   const location = useLocation();
   const id = location?.state?.id;
   const email = location?.state?.email;
+  const avature = location?.state?.avature;
   const email_hidden = middle_hidden(email);
 
   const { values, errors, handleChange, handleSubmit, handleBlur, touched } =
@@ -90,7 +90,11 @@ export default function Verify() {
       transition={{ duration: 0.5 }}
     >
       <div className="w-full text-4xl font-semibold mb-4 flex items-start gap-2">
-        <FaRegCircleUser className=" font-semibold mt-1" />
+        {avature ? (
+          <UserAvature imagesUrl={avature} />
+        ) : (
+          <FaRegCircleUser className="text-4xl font-semibold mt-1" />
+        )}
         <h1 className=" text-4xl font-semibold">Verify Your Account</h1>
       </div>
       <div className="w-full text-white px-2">

@@ -1,75 +1,82 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useSelector } from "react-redux";
 import UserAvature from "./UserAvature";
-import { FaRegHeart } from "react-icons/fa";
-import { MdHome, MdContactSupport } from "react-icons/md";
-import { IoMdAddCircle } from "react-icons/io";
+import { FaRegHeart, FaBed, FaCogs, FaEnvelope } from "react-icons/fa";
+import { MdHome } from "react-icons/md";
 
-function useScrollLength() {
-  const [scrollPosition, setScrollPosition] = useState(0);
+const Navbar = ({ scrollY }) => {
+  const { pathname } = useLocation();
+  const { isLogged } = useSelector((state) => state.isLoggedReducer);
+  const avature = useSelector((state) => state.userAvatureReducer);
+  const [isTrue, setIsTrue] = useState(false);
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY; // Distance scrolled from the top
-      setScrollPosition(scrollTop);
-    };
-    window.addEventListener("scroll", handleScroll);
-    // Cleanup event listener on component unmount
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    if (pathname !== "/" && !pathname.startsWith("/authentication")) {
+      setIsTrue(true);
+    } else if (scrollY < 20) {
+      setIsTrue(false);
+    } else {
+      setIsTrue(true);
+    }
+  }, [scrollY || pathname]);
 
-  return scrollPosition;
-}
-
-const Navbar = () => {
-  const isLogged = useSelector((state) => state.isLoggedReducer);
-  const [isOpen, setIsOpen] = useState(false);
-  const scrollPosition = useScrollLength();
-
-  console.log(scrollPosition);
   return (
-    <motion.nav
+    <nav
       className={` ${
-        scrollPosition <= 30 ? "bg-transparent" : " bg-black"
-      } z-100 transition-all duration-1000 shadow-lg fixed top-0  w-screen z-50
+        !isTrue ? "bg-transparent fixed" : "bg-white shadow-lg sticky"
+      } z-100 transition-all duration-1000 shadow-lg  top-0 right-0  w-full  z-50
     h-16`}
-      initial={{ opacity: 0, y: -80 }}
-      animate={{ opacity: 1, y: 0 }}
     >
-      <div className="container mx-auto px-4">
+      <motion.div
+        initial={{ opacity: 0, y: -80 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="container mx-auto px-4"
+      >
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
-          <div className="text-2xl font-bold text-white whitespace-nowrap">
-            <Link href="/">Hotel Management</Link>
+          <div
+            className={`text-2xl font-bold ${
+              isTrue ? "text-black" : "text-white"
+            } whitespace-nowrap`}
+          >
+            <h1>Hotel Management</h1>
           </div>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex space-x-10 justify-center items-center">
-            <Link to="/" className="text-white hover:text-yellow-300">
+            <Link
+              to="/"
+              className={`${
+                isTrue ? "text-black" : "text-white"
+              } hover:text-yellow-300`}
+            >
               Home
             </Link>
-            <Link to="/rooms" className="text-white hover:text-yellow-300">
-              Rooms
-            </Link>
-            <Link to="/Facilities" className="text-white hover:text-yellow-300">
+            <Link
+              to="/Facilities"
+              className={`${
+                isTrue ? "text-black" : "text-white"
+              } hover:text-yellow-300`}
+            >
               Facilities
-            </Link>
-            <Link to="/booking" className="text-white hover:text-yellow-300">
-              Booking
             </Link>
             <Link
               to="/contact"
-              className="text-white hover:text-yellow-300 whitespace-nowrap"
+              className={`${
+                isTrue ? "text-black" : "text-white"
+              } hover:text-yellow-300`}
             >
               Contact Us
             </Link>
             {isLogged ? (
-              <UserAvature />
+              <UserAvature imagesUrl={avature} />
             ) : (
               <Link
                 to="/authentication"
-                className="text-white hover:text-yellow-300"
+                className={`${
+                  isTrue ? "text-black" : "text-white"
+                } hover:text-yellow-300`}
               >
                 Login
               </Link>
@@ -79,7 +86,9 @@ const Navbar = () => {
           <div className="md:hidden flex justify-around itmes-center gap-3">
             <Link
               to="/authentication"
-              className="text-white hover:text-yellow-300"
+              className={`${
+                isTrue ? "text-black" : "text-white"
+              } hover:text-yellow-300`}
             >
               <motion.div
                 whileHover={{ scale: 1.1 }}
@@ -90,11 +99,13 @@ const Navbar = () => {
               </motion.div>
             </Link>
             {isLogged ? (
-              <UserAvature />
+              <UserAvature imagesUrl={avature} />
             ) : (
               <Link
                 to="/authentication"
-                className="text-white hover:text-yellow-300"
+                className={`${
+                  isTrue ? "text-black" : "text-white"
+                } hover:text-yellow-300`}
               >
                 Login
               </Link>
@@ -104,8 +115,17 @@ const Navbar = () => {
 
         {/* Mobile Menu bottom items */}
 
-        <div className="md:hidden fixed flex bottom-0 left-0 backdrop-blur-md w-full justify-between p-2">
-          <Link href="#home" className="block py-2 px-4 text-white ">
+        <div
+          className={`  ${!isTrue ? "bg-transparent" : "bg-white shadow-lg"} ${
+            pathname.startsWith("/user-dashboard") ? "hidden" : " "
+          } md:hidden fixed flex bottom-0 left-0 backdrop-blur-md w-full justify-between p-2`}
+        >
+          <Link
+            to="/"
+            className={`block py-2 px-4 ${
+              isTrue ? "text-black" : "text-white"
+            }`}
+          >
             <motion.div
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
@@ -114,45 +134,52 @@ const Navbar = () => {
               <MdHome className="w-full h-full text-3xl" />
             </motion.div>
           </Link>
-          <Link href="#rooms" className="block py-2 px-4 text-white ">
+          <Link
+            to="/all-rooms"
+            className={`block py-2 px-4 ${
+              isTrue ? "text-black" : "text-white"
+            }`}
+          >
             <motion.div
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               className="w-full h-full"
             >
-              <IoMdAddCircle className="w-full h-full text-3xl" />
+              <FaBed className="w-full h-full text-3xl" />
             </motion.div>
           </Link>
-          <Link href="#facilities" className="block py-2 px-4 text-white ">
+          <Link
+            href="/Facilities"
+            className={`block py-2 px-4 ${
+              isTrue ? "text-black" : "text-white"
+            }`}
+          >
             <motion.div
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               className="w-full h-full"
             >
-              <MdContactSupport className="w-full h-full text-3xl" />
+              <FaEnvelope className="w-full h-full text-3xl" />
             </motion.div>
           </Link>
-          <Link href="#booking" className="block py-2 px-4 text-white ">
+
+          <Link
+            to="/contact"
+            className={`block py-2 px-4 ${
+              isTrue ? "text-black" : "text-white"
+            }`}
+          >
             <motion.div
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               className="w-full h-full"
             >
-              <MdContactSupport className="w-full h-full text-3xl" />
-            </motion.div>
-          </Link>
-          <Link href="#contact" className="block py-2 px-4 text-white ">
-            <motion.div
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              className="w-full h-full"
-            >
-              <MdContactSupport className="w-full h-full text-3xl" />
+              <FaEnvelope className="w-full h-full text-3xl" />
             </motion.div>
           </Link>
         </div>
-      </div>
-    </motion.nav>
+      </motion.div>
+    </nav>
   );
 };
 

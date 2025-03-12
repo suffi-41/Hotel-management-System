@@ -1,50 +1,41 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { FaRegCircleUser } from "react-icons/fa6";
-import {Link, useLocation, useNavigate} from "react-router-dom"
-import {useFormik}  from "formik";
+import { Link, useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
 import { toast } from "react-toastify";
 import { loginScema } from "../scema";
-import { loginUrl} from "../utils/api";
-
-
+import { loginUrl } from "../utils/api";
 
 export default function Login() {
   const navigate = useNavigate();
-  const {values, errors, touched, handleBlur, handleChange, handleSubmit} = useFormik({
-    initialValues:{
-      phone:""
-    },
-    validationSchema: loginScema,
-    onSubmit: async (values) => {
-      console.log(values);
-
-      const response = await fetch(
-        loginUrl,
-        {
+  const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
+    useFormik({
+      initialValues: {
+        phone: "",
+      },
+      validationSchema: loginScema,
+      onSubmit: async (values) => {
+        const response = await fetch(loginUrl, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(values),
+        });
+        const { status, message, data } = await response.json();
+        if (status) {
+          toast.success(message);
+          navigate("password", { state: { data } });
+        } else {
+          toast.error(message);
         }
-      );
-      const { status, message, data} = await response.json();
-      console.log(status,"response data")
-      if (status) {
-        toast.success(message);
-        navigate("password", {state:{data}});      
-      } else {
-        toast.error(message);
-      }
-    },
-  })
+      },
+    });
 
-  
   return (
     <motion.div
       className="z-50 sm:w-1/2 w-9/12  p-5 bg-transparent text-white flex flex-col justifuy-center items-center gap-2 backdrop-blur-sm  shadow-lg rounded-lg  "
-
       initial={{ opacity: 0, scale: 0 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0 }}
@@ -54,18 +45,27 @@ export default function Login() {
         <FaRegCircleUser className="text-4xl font-semibold mt-1" />
         <h1 className=" text-4xl font-semibold">Login</h1>
       </div>
-      <div className='w-full text-white flex justify-center items-start flex-col px-2'>
+      <div className="w-full text-white flex justify-center items-start flex-col px-2">
         <p className="text-justify text-white opacity-100">
-          Welcome back. Please enter your phone number to continue. if you don't have an account you can create one.
+          Welcome back. Please enter your phone number to continue. if you don't
+          have an account you can create one.
         </p>
-        <Link to="/authentication/signup" className="text-start text-white opacity-100 cursor-pointer underline hover:text-blue-700">Click here to create an account</Link>
+        <Link
+          to="/authentication/signup"
+          className="text-start text-white opacity-100 cursor-pointer underline hover:text-blue-700"
+        >
+          Click here to create an account
+        </Link>
       </div>
       <div className="flex justify-center gap-1 flex-col">
         <p className="text-red-900 opacity-100">
           {errors.phone && touched.phone && "*" + errors.phone}
         </p>
       </div>
-      <form onSubmit={handleSubmit} className="flex justify-center items-center gap-2 w-full flex-wrap lg:flex-nowrap  ">
+      <form
+        onSubmit={handleSubmit}
+        className="flex justify-center items-center gap-2 w-full flex-wrap lg:flex-nowrap  "
+      >
         <input
           type="text"
           placeholder="Enter you phone number"

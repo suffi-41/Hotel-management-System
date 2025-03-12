@@ -1,25 +1,87 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import App from "../App.jsx";
 import Landding from "../Layout/Landding.jsx";
-import Login from "../pages/Login.jsx";
-import Verify from "../pages/Verify.jsx";
-import Password from "../pages/Password.jsx";
-import Creatation from "../pages/Creatation.jsx";
-import Redux from "../pages/Redux.jsx";
-import ResetPassword from "../pages/ResetPassword.jsx";
-
-// admin pages routing
 import AdminDashboard from "../Layout/AdminDashborad.jsx";
-import CustomerFeedback from "../pages/Admin/CustomerFeedback.jsx";
-import RoomManagemant from "../pages/Admin/RoomManagemant.jsx";
-import Stuffmanagemant from "../pages/Admin/Stuffmanagemant.jsx";
-import Bookings from "../pages/Admin/Bookings.jsx";
+import LoadingPage from "../components/LoadingPage.jsx";
 
-// staff pages routing 
-import StaffDashboard from "../Layout/StaffDashboard.jsx";
-import Notification from "../pages/Stuff/Notification.jsx";
+const AdminProfile = lazy(() => import("../pages/Admin/AdminProfiel.jsx"));
+// Skeleton Components
+import RoomManagemantSkeleton from "../pages/skeleton/RoomManagemantSkeleton.jsx";
+// Lazy-loaded components
+const DashboardPage = lazy(() => import("../pages/Admin/DashboardPage.jsx"));
+const Login = lazy(() => import("../pages/Login.jsx"));
+const Verify = lazy(() => import("../pages/Verify.jsx"));
+const Password = lazy(() => import("../pages/Password.jsx"));
+const Creatation = lazy(() => import("../pages/Creatation.jsx"));
+const Redux = lazy(() => import("../pages/Redux.jsx"));
+const ResetPassword = lazy(() => import("../pages/ResetPassword.jsx"));
+const LoginCradentical = lazy(() =>
+  import("../pages/Admin/authentication/LoginCradential.jsx")
+);
+const PasswordVerify = lazy(() =>
+  import("../pages/Admin/authentication/PasswordVerify.jsx")
+);
+const CustomerFeedback = lazy(() =>
+  import("../pages/Admin/CustomerFeedback.jsx")
+);
+const RoomManagemant = lazy(() =>
+  import("../pages/Admin/room/RoomManagemant.jsx")
+);
+const Room = lazy(() => import("../pages/Admin/room/Room.jsx"));
 
+const RoomHistory = lazy(() => import("../pages/Admin/room/RoomHistory.jsx"));
+
+const Bookings = lazy(() => import("../pages/Admin/Bookings.jsx"));
+
+const NotFoundpage = lazy(() => import("../pages/NotFoundpage.jsx"));
+
+// room booking history
+const RoomBookingHistory = lazy(() =>
+  import("../pages/Admin/RoomBookingHistory.jsx")
+);
+
+//user component  in admin dashboard
+const UsersManagemant = lazy(() =>
+  import("../pages/Admin/users/UsersManagement.jsx")
+);
+
+const Userprofile = lazy(() => import("../pages/Admin/users/Userprofile.jsx"));
+const BookingDetails = lazy(() =>
+  import("../pages/Admin/users/BooKingDetails.jsx")
+);
+//Visualized
+const Report = lazy(() => import("../pages/Admin/inside/Report.jsx"));
+
+//user
+const ShowRoom = lazy(() => import("../pages/User/ShowRoom.jsx"));
+const RoomDetialsShow = lazy(() =>
+  import("../pages/User/component/RoomDetialShow.jsx")
+);
+
+const BookingRoom = lazy(() => import("../pages/User/BookingRoom.jsx"));
+const PaymentPage = lazy(() => import("../components/PaymentPage.jsx"));
+const PaymentOtp = lazy(() => import("../components/PaymentOtp.jsx"));
+const Dashboard = lazy(() => import("../pages/User/dashboard/Dashboard.jsx"));
+const UserProfilePage = lazy(() =>
+  import("../pages/User/dashboard/UserProflePage.jsx")
+);
+const BookedRoom = lazy(() => import("../pages/User/dashboard/BookedRoom.jsx"));
+const ContactPage = lazy(() => import("../pages/User/Contectpage.jsx"));
+const FacilitiesPage = lazy(() => import("../pages/User/FacilitiesPage.jsx"));
+const BookingDetailsShow = lazy(() =>
+  import("../components/BookingDetialsShow.jsx")
+);
+
+const DashboardScreen = lazy(() => import("../Layout/DashboardScreen.jsx"));
+// Reusable Suspense Wrapper
+const SuspenseWrapper = ({ Component, fallback = <LoadingPage /> }) => (
+  <Suspense fallback={fallback}>
+    <Component />
+  </Suspense>
+);
+
+// Router Configuration
 const router = createBrowserRouter([
   {
     path: "/",
@@ -29,87 +91,196 @@ const router = createBrowserRouter([
         path: "/",
         element: (
           <Landding>
-            <h1>Landding</h1>
+            <SuspenseWrapper Component={ShowRoom} />
           </Landding>
         ),
       },
       {
-        path: "/authentication",
+        path: "/room/:id",
         element: (
           <Landding>
-            <Login />
+            <SuspenseWrapper Component={RoomDetialsShow} />
           </Landding>
         ),
+      },
+      {
+        path: "/booking-room/:id",
+        element: (
+          <Landding>
+            <SuspenseWrapper Component={BookingRoom} />
+          </Landding>
+        ),
+      },
+      {
+        path: "/room/booking-room/payment/:id",
+        element: (
+          <Landding>
+            <SuspenseWrapper Component={PaymentPage} />
+          </Landding>
+        ),
+      },
+      {
+        path: "/room/booking-room/payment/otp/:id",
+        element: (
+          <Landding>
+            <SuspenseWrapper Component={PaymentOtp} />
+          </Landding>
+        ),
+      },
+      {
+        path: "/contact",
+        element: (
+          <Landding>{<SuspenseWrapper Component={ContactPage} />}</Landding>
+        ),
+      },
+      {
+        path: "/facilities",
+        element: (
+          <Landding>{<SuspenseWrapper Component={FacilitiesPage} />}</Landding>
+        ),
+      },
+      {
+        path: "/user-dashboard",
+        element: (
+          <Landding>
+            <SuspenseWrapper Component={Dashboard} />
+          </Landding>
+        ),
+        children: [
+          {
+            path: "profile",
+            element: (
+              <DashboardScreen>
+                <SuspenseWrapper Component={UserProfilePage} />
+              </DashboardScreen>
+            ),
+          },
+          {
+            path: "bookings",
+            element: (
+              <DashboardScreen>
+                <SuspenseWrapper Component={BookedRoom} />
+              </DashboardScreen>
+            ),
+          },
+          {
+            path: "bookings/details/:id",
+            element: (
+              <DashboardScreen>
+                <SuspenseWrapper Component={BookingDetailsShow} />
+              </DashboardScreen>
+            ),
+          },
+          {
+            path: "notification",
+            element: <div>Notification</div>,
+          },
+        ],
+      },
+      {
+        path: "/authentication",
+        element: <Landding>{<SuspenseWrapper Component={Login} />}</Landding>,
       },
       {
         path: "/authentication/signup",
         element: (
-          <Landding>
-            <Creatation />
-          </Landding>
+          <Landding>{<SuspenseWrapper Component={Creatation} />}</Landding>
         ),
       },
       {
-        path: "authentication/verify",
-        element: (
-          <Landding>
-            <Verify />
-          </Landding>
-        ),
+        path: "/authentication/verify",
+        element: <Landding>{<SuspenseWrapper Component={Verify} />}</Landding>,
       },
       {
         path: "/authentication/password",
         element: (
-          <Landding>
-            <Password />
-          </Landding>
+          <Landding>{<SuspenseWrapper Component={Password} />}</Landding>
         ),
       },
       {
         path: "/authentication/reset-password/accound-verification",
-        element: (
-          <Landding>
-            <Verify />
-          </Landding>
-        ),
+        element: <Landding>{<SuspenseWrapper Component={Verify} />}</Landding>,
       },
       {
         path: "/authentication/reset-password/create-password",
         element: (
-          <Landding>
-            <ResetPassword />
-          </Landding>
+          <Landding>{<SuspenseWrapper Component={ResetPassword} />}</Landding>
         ),
       },
       {
         path: "redux",
-        element: (
-          <Landding>
-            <Redux />
-          </Landding>
-        ),
+        element: <Landding>{<SuspenseWrapper Component={Redux} />}</Landding>,
       },
       {
         path: "/admin",
-        element: <App />,
+        element: <App>
+          
+        </App>,
         children: [
           {
             path: "/admin",
-            element: <AdminDashboard />,
+            element: (
+              <AdminDashboard>
+                {<SuspenseWrapper Component={DashboardPage} />}
+              </AdminDashboard>
+            ),
+          },
+          {
+            path: "login",
+            element: (
+              <AdminDashboard>
+                {<SuspenseWrapper Component={LoginCradentical} />}
+              </AdminDashboard>
+            ),
+          },
+          {
+            path: "password-verify",
+            element: (
+              <AdminDashboard>
+                {<SuspenseWrapper Component={PasswordVerify} />}
+              </AdminDashboard>
+            ),
+          },
+          {
+            path: "profile",
+            element:(
+              <AdminDashboard>
+                {<SuspenseWrapper Component={AdminProfile} />}
+              </AdminDashboard>
+            )
           },
           {
             path: "/admin/dashboard/rooms",
             element: (
               <AdminDashboard>
-                <RoomManagemant />
+                <SuspenseWrapper
+                  Component={RoomManagemant}
+                  fallback={<RoomManagemantSkeleton />}
+                />
               </AdminDashboard>
             ),
           },
           {
-            path: "/admin/dashboard/users",
+            path: "/admin/dashboard/rooms/:id",
             element: (
               <AdminDashboard>
-                <h1>Users</h1>
+                {<SuspenseWrapper Component={Room} />}
+              </AdminDashboard>
+            ),
+          },
+          {
+            path: "/admin/dashboard/rooms/history/:id",
+            element: (
+              <AdminDashboard>
+                {<SuspenseWrapper Component={RoomHistory} />}
+              </AdminDashboard>
+            ),
+          },
+          {
+            path: "/admin/dashboard/users/bookings/details/:id",
+            element: (
+              <AdminDashboard>
+                {<SuspenseWrapper Component={BookingDetailsShow} />}
               </AdminDashboard>
             ),
           },
@@ -117,7 +288,7 @@ const router = createBrowserRouter([
             path: "/admin/dashboard/bookings",
             element: (
               <AdminDashboard>
-                <Bookings />
+                {<SuspenseWrapper Component={Bookings} />}
               </AdminDashboard>
             ),
           },
@@ -125,50 +296,55 @@ const router = createBrowserRouter([
             path: "/admin/dashboard/feedback",
             element: (
               <AdminDashboard>
-                <CustomerFeedback />
+                {<SuspenseWrapper Component={CustomerFeedback} />}
               </AdminDashboard>
             ),
           },
           {
-            path: "/admin/dashboard/staff",
+            path: "/admin/dashboard/users",
             element: (
               <AdminDashboard>
-                <Stuffmanagemant />
+                {<SuspenseWrapper Component={UsersManagemant} />}
+              </AdminDashboard>
+            ),
+          },
+          {
+            path: "/admin/dashboard/users/user-profile/:id",
+            element: (
+              <AdminDashboard>
+                {<SuspenseWrapper Component={Userprofile} />}
+              </AdminDashboard>
+            ),
+          },
+          {
+            path: "/admin/dashboard/room-booking-history",
+            element: (
+              <AdminDashboard>
+                {<SuspenseWrapper Component={RoomBookingHistory} />}
+              </AdminDashboard>
+            ),
+          },
+          {
+            path: "/admin/dashboard/users/booking-history/:id",
+            element: (
+              <AdminDashboard>
+                {<SuspenseWrapper Component={BookingDetails} />}
+              </AdminDashboard>
+            ),
+          },
+          {
+            path: "/admin/dashboard/report",
+            element: (
+              <AdminDashboard>
+                {<SuspenseWrapper Component={Report} />}
               </AdminDashboard>
             ),
           },
         ],
       },
       {
-        path: "/staff",
-        element: <App />,
-        children: [
-          {
-            path: "/staff",
-            element: <StaffDashboard/>,
-          },
-          {
-            path: "/staff/dashboard",
-            element: <h1>Staff Dashboard</h1>,
-          },
-          {
-            path: "/staff/dashboard/notifications",
-            element: (
-              <StaffDashboard>
-                <Notification/>
-              </StaffDashboard>
-            ),
-          },
-          {
-            path: "/staff/dashboard/feedback",
-            element: <h1>Staff Feedback</h1>,
-          }
-        ],
-      },
-
-      {
         path: "*",
-        element: <h1>404</h1>,
+        element: <SuspenseWrapper Component={NotFoundpage} />,
       },
     ],
   },

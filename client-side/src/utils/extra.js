@@ -28,13 +28,37 @@ export const backgroundImage = () => {
 export const logged_token = () => {
   return localStorage.getItem("authentication_token")
 }
+export const admin_token = () => {
+  return localStorage.getItem("authentication_admin_token")
+}
 
 export const middle_hidden = (string) => {
-  const first = string.slice(0, 3);
-  const last = string.slice(-10);
-  const hidden = string.replace(/./g, "*").slice(0, 10);
+  const first = string?.slice(0, 3);
+  const last = string?.slice(-10);
+  const hidden = string?.replace(/./g, "*").slice(0, 10);
   return `${first}${hidden}${last}`
 }
+
+export function formatDate(isoDate) {
+  let date = new Date(isoDate);
+  let day = String(date.getDate()).padStart(2, "0");
+  let month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+  let year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+}
+
+export const calculateDays = (checkInDate, checkOutDate) => {
+  if (!checkInDate || !checkOutDate) return 0; // Handle missing dates
+
+  const checkIn = new Date(checkInDate);
+  const checkOut = new Date(checkOutDate);
+
+  return Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
+};
+
+
+
+
 
 
 

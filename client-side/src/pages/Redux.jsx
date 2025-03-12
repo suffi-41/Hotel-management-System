@@ -13,8 +13,6 @@ export default function Redux() {
   const {username} = useContext(UserContext);
   const {room} = useContext(RoomContext);
 
-  console.log(username,room);
-
   const action = bindActionCreators(actionCreator, dispatch);
   const amount = useSelector(state=>state.changeNumber)
   const isLogged = useSelector(state=>state.isLoggedReducer);

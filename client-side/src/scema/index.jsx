@@ -1,6 +1,7 @@
 import * as Yup from "yup";
 
 
+
 export const RegisterScema = Yup.object().shape({
   firstname: Yup.string()
     .required("Required")
@@ -35,7 +36,13 @@ export const loginScema = Yup.object().shape({
     .required("Required")
     .min(10, "Must be at least 10 digits")
     .max(25, "Must be at most 25 digits")
-   
+});
+
+export const loginCradentiacl = Yup.object().shape({
+  cradentical: Yup.string()
+    .required("Required")
+    .min(10, "Must be at least 10 digits")
+    .max(25, "Must be at most 25 digits"),
 });
 
 export const passwordScema = Yup.object().shape({
@@ -52,3 +59,19 @@ export const resertPasswordCreationScema = Yup.object().shape({
     .oneOf([Yup.ref("password"), null], "Passwords do not match")
     .required("Required"),
 });
+ // add room validation schema
+export const  addRoomvalidationSchema =  Yup.object({
+      roomNumber: Yup.string()
+        .required("Room number is required"),
+      type: Yup.string()
+        .required("Room type is required"),
+      price: Yup.number()
+        .required("Price is required")
+        .positive("Price must be a positive number"),
+      status: Yup.string()
+        .required("Status is required"),
+})
+
+
+
+//add staff validation schema

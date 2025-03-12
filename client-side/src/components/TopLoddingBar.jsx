@@ -11,7 +11,7 @@ function TopLodingBar() {
     nprogress.done();
 
     // Optional: Customize nprogress settings (e.g., speed, minimum percentage)
-    nprogress.configure({ showSpinner: true, speed: 500, minimum: 0.1 });
+    nprogress.configure({ showSpinner: false, speed: 500, minimum: 0.1 });
   
     return () => {
       nprogress.done(); // Ensure the loading bar completes on unmount

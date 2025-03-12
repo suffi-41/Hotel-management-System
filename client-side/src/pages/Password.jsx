@@ -7,16 +7,15 @@ import { toast } from "react-toastify";
 import { passwordScema } from "../scema";
 import { passwordUrl } from "../utils/api";
 import { UserContext } from "../state/User";
+import UserAvature from "../components/UserAvature";
 
 export default function Password() {
-  const context = useContext(UserContext);
-  const { sendOtp } = context;
   const navigate = useNavigate();
   const location = useLocation();
-  const id = location?.state?.data?.id;
-  const email = location?.state?.data?.email;
-  console.log(id, email);
+  const context = useContext(UserContext);
+  const { sendOtp } = context;
 
+  const {id, email, avature} = location?.state?.data;
 
   const { values, errors, handleBlur, handleChange, handleSubmit, touched } =
     useFormik({
@@ -37,7 +36,7 @@ export default function Password() {
         if (status) {
           toast.success(message);
           sendOtp(id);
-          navigate("/authentication/verify", { state: { id, email } });
+          navigate("/authentication/verify", { state: { id, email, avature } });
         } else {
           toast.error(message);
         }
@@ -52,7 +51,11 @@ export default function Password() {
       transition={{ duration: 0.5 }}
     >
       <div className="w-full text-4xl font-semibold mb-4 flex items-start gap-2">
-        <FaRegCircleUser className="text-4xl font-semibold mt-1" />
+        {avature ? (
+          <UserAvature imagesUrl={avature} />
+        ) : (
+          <FaRegCircleUser className="text-4xl font-semibold mt-1" />
+        )}
         <h1 className=" text-4xl font-semibold">Password</h1>
       </div>
       <div className="w-full text-white flex justify-center items-start flex-col px-2">
@@ -63,7 +66,9 @@ export default function Password() {
         <Link
           to="/authentication/reset-password/accound-verification"
           state={{ id, email }}
-          onClick={()=>{ sendOtp(id)}}
+          onClick={() => {
+            sendOtp(id);
+          }}
           className="text-start text-white opacity-100 cursor-pointer underline hover:text-red-900"
         >
           Click here to reset password

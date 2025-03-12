@@ -1,31 +1,38 @@
-import { Outlet } from 'react-router-dom'
-import './App.css'
-import TopLodingBar from './components/TopLoddingBar'
-import { useEffect } from 'react';
+import { Outlet } from "react-router-dom";
+import "./App.css";
+import TopLodingBar from "./components/TopLoddingBar";
+import { useEffect } from "react";
 
 import { actionCreator } from "./redux/index";
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from "react-redux";
 import { bindActionCreators } from "redux";
-import {logged_token} from "./utils/extra";
+import { logged_token, admin_token } from "./utils/extra";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 function App() {
   const token = logged_token();
+  const adminToken = admin_token();
   const dispatch = useDispatch();
   const action = bindActionCreators(actionCreator, dispatch);
-  const amount = useSelector(state=>state.changeNumber)
 
-  useEffect(()=>{
-    if(token){
+  useEffect(() => {
+    if (token) {
       action.login();
     }
-  },[])
+    if (adminToken) {
+      action.Adminlogin();
+    }
+  }, []);
   return (
-    <main className='w-screen h-screen overflow-auto'>
-    <TopLodingBar/>    
-     <Outlet/>
-    </main>
-    
-  )
+    <QueryClientProvider client={queryClient}>
+      <main className="w-screen h-screen overflow-auto">
+        <TopLodingBar />
+        <Outlet />
+      </main>
+    </QueryClientProvider>
+  );
 }
 
-export default App
+export default App;
